@@ -1,77 +1,88 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react';
+import { placeBet } from '../api.js';
 
-export default function BetModal({ match, existingBet, isResult, onSave, onClose }) {
-  const [score1, setScore1] = useState('')
-  const [score2, setScore2] = useState('')
+const FLAGS = {
+  'Mexico': '🇲🇽', 'South Africa': '🇿🇦', 'Czechia': '🇨🇿', 'South Korea': '🇰🇷',
+  'Canada': '🇨🇦', 'Bosnia-Herzegovina': '🇧🇦', 'Qatar': '🇶🇦', 'Switzerland': '🇨🇭',
+  'Brazil': '🇧🇷', 'Morocco': '🇲🇦', 'Haiti': '🇭🇹', 'Scotland': '🏴󠁧󠁢󠁳󠁣󠁴󠁿',
+  'USA': '🇺🇸', 'Paraguay': '🇵🇾', 'Australia': '🇦🇺', 'Türkiye': '🇹🇷',
+  'Germany': '🇩🇪', 'Ivory Coast': '🇨🇮', 'Curaçao': '🇨🇼', 'Ecuador': '🇪🇨',
+  'Netherlands': '🇳🇱', 'Japan': '🇯🇵', 'Sweden': '🇸🇪', 'Tunisia': '🇹🇳',
+  'Belgium': '🇧🇪', 'Egypt': '🇪🇬', 'Iran': '🇮🇷', 'New Zealand': '🇳🇿',
+  'Spain': '🇪🇸', 'Uruguay': '🇺🇾', 'Cape Verde': '🇨🇻', 'Saudi Arabia': '🇸🇦',
+  'France': '🇫🇷', 'Senegal': '🇸🇳', 'Iraq': '🇮🇶', 'Norway': '🇳🇴',
+  'Argentina': '🇦🇷', 'Algeria': '🇩🇿', 'Austria': '🇦🇹', 'Jordan': '🇯🇴',
+  'Portugal': '🇵🇹', 'Colombia': '🇨🇴', 'Congo DR': '🇨🇩', 'Uzbekistan': '🇺🇿',
+  'England': '🏴󠁧󠁢󠁥󠁮󠁧󠁿', 'Croatia': '🇭🇷', 'Ghana': '🇬🇭', 'Panama': '🇵🇦',
+};
 
-  useEffect(() => {
-    if (existingBet) {
-      setScore1(String(existingBet.predicted_score1))
-      setScore2(String(existingBet.predicted_score2))
-    } else {
-      setScore1('0')
-      setScore2('0')
+export default function BetModal({ match, onClose, onSave }) {
+  const [score1, setScore1] = useState(match.predicted_score1 ?? 0);
+  const [score2, setScore2] = useState(match.predicted_score2 ?? 0);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    try {
+      await placeBet(match.id, parseInt(score1), parseInt(score2));
+      onSave();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
-  }, [existingBet])
-
-  function handleSave() {
-    const s1 = parseInt(score1)
-    const s2 = parseInt(score2)
-    if (isNaN(s1) || isNaN(s2) || s1 < 0 || s2 < 0) {
-      alert('Please enter valid scores (0 or higher)')
-      return
-    }
-    onSave(s1, s2)
   }
-
-  function handleOverlayClick(e) {
-    if (e.target === e.currentTarget) onClose()
-  }
-
-  const title = isResult ? 'Enter Match Result' : (existingBet ? 'Edit Your Bet' : 'Place Your Bet')
-  const subtitle = `${match.team1} vs ${match.team2}`
 
   return (
-    <div className="modal-overlay" onClick={handleOverlayClick}>
-      <div className="modal" role="dialog" aria-modal="true">
-        <div className="modal-title">{title}</div>
-        <div className="modal-subtitle">{subtitle}</div>
-
-        <div className="score-inputs">
-          <div className="score-input-group">
-            <div className="score-input-label">{match.team1}</div>
-            <input
-              className="score-input"
-              type="number"
-              min="0"
-              max="20"
-              value={score1}
-              onChange={e => setScore1(e.target.value)}
-              onFocus={e => e.target.select()}
-            />
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal" onClick={e => e.stopPropagation()}>
+        <h2>🎯 Tu Apuesta</h2>
+        <p className="modal-match-title">
+          {FLAGS[match.team1] || '🏳️'} {match.team1} vs {match.team2} {FLAGS[match.team2] || '🏳️'}
+        </p>
+        <form onSubmit={handleSubmit}>
+          <div className="result-inputs">
+            <div className="form-group">
+              <label>{match.team1}</label>
+              <input
+                type="number"
+                min="0"
+                max="20"
+                value={score1}
+                onChange={e => setScore1(e.target.value)}
+                onFocus={e => e.target.select()}
+              />
+            </div>
+            <span className="result-vs">-</span>
+            <div className="form-group">
+              <label>{match.team2}</label>
+              <input
+                type="number"
+                min="0"
+                max="20"
+                value={score2}
+                onChange={e => setScore2(e.target.value)}
+                onFocus={e => e.target.select()}
+              />
+            </div>
           </div>
-          <div className="score-dash">—</div>
-          <div className="score-input-group">
-            <div className="score-input-label">{match.team2}</div>
-            <input
-              className="score-input"
-              type="number"
-              min="0"
-              max="20"
-              value={score2}
-              onChange={e => setScore2(e.target.value)}
-              onFocus={e => e.target.select()}
-            />
+          <div className="points-legend">
+            <p>⚽ Resultado exacto = 5 pts</p>
+            <p>✅ Ganador correcto = 3 pts</p>
+            <p>🤝 Empate correcto = 1 pt</p>
           </div>
-        </div>
-
-        <div className="modal-actions">
-          <button className="btn btn-secondary" onClick={onClose}>Cancel</button>
-          <button className="btn btn-primary" onClick={handleSave}>
-            {isResult ? 'Save Result' : 'Save Bet'}
-          </button>
-        </div>
+          {error && <p className="error-msg">{error}</p>}
+          <div className="modal-actions">
+            <button type="button" className="btn-secondary" onClick={onClose}>Cancelar</button>
+            <button type="submit" className="btn-primary" disabled={loading}>
+              {loading ? 'Guardando...' : 'Guardar Apuesta'}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
-  )
+  );
 }

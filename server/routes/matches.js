@@ -15,7 +15,7 @@ function authenticate(req, res, next) {
 router.get('/', authenticate, async (req, res) => {
   try {
     const result = await pool.query(`
-      SELECT m.*, b.predicted_score1, b.predicted_score2, b.points_earned
+      SELECT m.*, b.id AS bet_id, b.predicted_score1, b.predicted_score2, b.points_earned
       FROM matches m
       LEFT JOIN bets b ON b.match_id = m.id AND b.user_id = $1
       ORDER BY m.id

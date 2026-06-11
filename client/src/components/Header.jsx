@@ -1,44 +1,32 @@
-import React from 'react'
-import { Link, useNavigate, useLocation } from 'react-router-dom'
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
-export default function Header({ user }) {
-  const navigate = useNavigate()
-  const location = useLocation()
+export default function Header({ user, setUser }) {
+  const navigate = useNavigate();
 
-  function handleLogout() {
-    localStorage.removeItem('token')
-    navigate('/login', { replace: true })
+  function logout() {
+    localStorage.removeItem('token');
+    if (setUser) setUser(null);
+    navigate('/login');
   }
 
   return (
     <header className="header">
-      <Link to="/schedule" className="header-logo">
-        ⚽ Apostemos
-      </Link>
-      <nav className="header-nav">
-        <Link
-          to="/schedule"
-          className={location.pathname === '/schedule' ? 'active' : ''}
-        >
-          Schedule
-        </Link>
-        <Link
-          to="/leaderboard"
-          className={location.pathname === '/leaderboard' ? 'active' : ''}
-        >
-          Leaderboard
-        </Link>
-      </nav>
-      <div className="header-right">
-        {user && (
-          <span className="header-username">
-            {user.is_admin ? '👑 ' : ''}{user.username}
-          </span>
-        )}
-        <button className="btn btn-danger" onClick={handleLogout}>
-          Logout
-        </button>
+      <div className="header-inner">
+        <div className="header-logo">
+          <span className="header-icon">⚽</span>
+          <span className="header-title">Apostemos</span>
+        </div>
+        <nav className="header-nav">
+          <Link to="/schedule" className="nav-link">Partidos</Link>
+          <Link to="/leaderboard" className="nav-link">Clasificación</Link>
+        </nav>
+        <div className="header-user">
+          <span className="user-name">{user?.username}</span>
+          {user?.is_admin && <span className="admin-badge">Admin</span>}
+          <button className="btn-logout" onClick={logout}>Salir</button>
+        </div>
       </div>
     </header>
-  )
+  );
 }

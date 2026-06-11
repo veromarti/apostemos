@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 
 const FLAGS = {
   'Mexico': '🇲🇽', 'South Africa': '🇿🇦', 'Czechia': '🇨🇿', 'South Korea': '🇰🇷',
@@ -13,99 +13,76 @@ const FLAGS = {
   'Argentina': '🇦🇷', 'Algeria': '🇩🇿', 'Austria': '🇦🇹', 'Jordan': '🇯🇴',
   'Portugal': '🇵🇹', 'Colombia': '🇨🇴', 'Congo DR': '🇨🇩', 'Uzbekistan': '🇺🇿',
   'England': '🏴󠁧󠁢󠁥󠁮󠁧󠁿', 'Croatia': '🇭🇷', 'Ghana': '🇬🇭', 'Panama': '🇵🇦',
-  'TBD': '🏳️',
+};
+
+function getFlag(team) {
+  return FLAGS[team] || '🏳️';
 }
 
-function flag(team) {
-  return FLAGS[team] || '🏳️'
-}
-
-function PointsBadge({ points }) {
-  if (points === null || points === undefined) return null
-  const cls = points === 5 ? 'points-5' : points === 3 ? 'points-3' : points === 1 ? 'points-1' : 'points-0'
-  const label = points === 5 ? '⭐ 5pts' : points === 3 ? '✅ 3pts' : points === 1 ? '🤝 1pt' : '❌ 0pts'
-  return <span className={`points-badge ${cls}`}>{label}</span>
+function getPointsBadgeClass(points) {
+  if (points === 5) return 'points-badge exact';
+  if (points === 3) return 'points-badge winner';
+  if (points === 1) return 'points-badge draw';
+  return 'points-badge wrong';
 }
 
 export default function MatchCard({ match, user, onBet, onResult }) {
-  const finished = match.status === 'finished'
-  const hasBet = match.bet_id !== null && match.bet_id !== undefined
-  const isAdmin = user && user.is_admin
+  const finished = match.status === 'finished';
+  const hasBet = match.predicted_score1 !== null && match.predicted_score1 !== undefined;
 
   return (
     <div className={`match-card ${finished ? 'finished' : ''}`}>
-      <div className="match-header">
-        <div className="match-teams">
-          <div className="team">
-            <span className="team-flag">{flag(match.team1)}</span>
-            <span className="team-name">{match.team1}</span>
-          </div>
-          {finished ? (
-            <div className="score-display">
-              <span>{match.score1}</span>
-              <span className="score-divider">—</span>
-              <span>{match.score2}</span>
-            </div>
-          ) : (
-            <span className="match-vs">vs</span>
-          )}
-          <div className="team">
-            <span className="team-flag">{flag(match.team2)}</span>
-            <span className="team-name">{match.team2}</span>
-          </div>
-        </div>
-      </div>
-
       <div className="match-meta">
-        {match.match_date && match.match_date !== 'TBD' && (
-          <span>📅 {match.match_date}</span>
-        )}
-        {match.match_time && match.match_time !== 'TBD' && (
-          <span>🕐 {match.match_time}</span>
-        )}
+        <span className="match-date">{match.match_date}{match.match_time && match.match_time !== 'TBD' ? ` • ${match.match_time}` : ''}</span>
         {match.venue && match.venue !== 'TBD' && (
-          <span>🏟️ {match.venue}</span>
+          <span className="match-venue">{match.venue}, {match.city}</span>
         )}
-        {match.city && match.city !== 'TBD' && (
-          <span>📍 {match.city}{match.country && match.country !== 'TBD' ? `, ${match.country}` : ''}</span>
-        )}
+      </div>
+      <div className="match-teams">
+        <div className="team team-left">
+          <span className="team-flag">{getFlag(match.team1)}</span>
+          <span className="team-name">{match.team1}</span>
+        </div>
+        <div className="match-score-area">
+          {finished ? (
+            <span className="actual-score">{match.score1} - {match.score2}</span>
+          ) : (
+            <span className="vs-text">VS</span>
+          )}
+        </div>
+        <div className="team team-right">
+          <span className="team-name">{match.team2}</span>
+          <span className="team-flag">{getFlag(match.team2)}</span>
+        </div>
       </div>
 
       <div className="match-footer">
-        <div className="bet-display">
-          {hasBet && (
-            <>
-              <span className="bet-label">Your bet:</span>
-              <span className="bet-score">
-                {match.predicted_score1} — {match.predicted_score2}
+        {hasBet && (
+          <div className="bet-info">
+            <span className="bet-label">Tu apuesta:</span>
+            <span className="bet-score">{match.predicted_score1} - {match.predicted_score2}</span>
+            {finished && match.points_earned !== null && (
+              <span className={getPointsBadgeClass(match.points_earned)}>
+                {match.points_earned === 5 ? '⚽ +5 pts' :
+                 match.points_earned === 3 ? '✅ +3 pts' :
+                 match.points_earned === 1 ? '🤝 +1 pt' : '❌ 0 pts'}
               </span>
-              {finished && <PointsBadge points={match.points_earned} />}
-            </>
-          )}
-          {!hasBet && !finished && (
-            <span className="bet-label" style={{ fontStyle: 'italic' }}>No bet placed</span>
-          )}
-          {!hasBet && finished && (
-            <span className="bet-label" style={{ fontStyle: 'italic' }}>No bet</span>
-          )}
-        </div>
-
+            )}
+          </div>
+        )}
         <div className="match-actions">
           {!finished && (
-            <button className="btn btn-primary btn-sm" onClick={onBet}>
-              {hasBet ? '✏️ Edit Bet' : '+ Place Bet'}
+            <button className="btn-bet" onClick={onBet}>
+              {hasBet ? '✏️ Editar Apuesta' : '🎯 Apostar'}
             </button>
           )}
-          {finished && !hasBet && (
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Finished</span>
-          )}
-          {isAdmin && (
-            <button className="btn btn-admin btn-sm" onClick={onResult}>
-              {finished ? '✏️ Edit Result' : '⚡ Enter Result'}
+          {user?.is_admin && (
+            <button className="btn-result" onClick={onResult}>
+              {finished ? '✏️ Editar Resultado' : '📋 Resultado'}
             </button>
           )}
         </div>
       </div>
     </div>
-  )
+  );
 }

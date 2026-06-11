@@ -17,7 +17,15 @@ router.post('/', authenticate, async (req, res) => {
   try {
     const match = await pool.query('SELECT * FROM matches WHERE id=$1', [matchId]);
     if (!match.rows[0]) return res.status(404).json({ error: 'Match not found' });
-    if (match.rows[0].status === 'finished') return res.status(400).json({ error: 'Match already finished' });
+    if (match.rows[0].status === 'finished') return res.status(400).json({ error: 'El partido ya terminó' });
+    // Lock bets once match has started (times stored as local North American time, treated as UTC-5)
+    const m = match.rows[0];
+    if (m.match_date && m.match_time && m.match_time !== 'TBD') {
+      const matchStart = new Date(`${m.match_date}T${m.match_time}:00-05:00`);
+      if (Date.now() >= matchStart.getTime()) {
+        return res.status(400).json({ error: 'El partido ya comenzó, no se puede modificar la apuesta' });
+      }
+    }
 
     const result = await pool.query(`
       INSERT INTO bets (user_id, match_id, predicted_score1, predicted_score2)

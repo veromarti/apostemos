@@ -28,6 +28,7 @@ function getPointsBadgeClass(points) {
 
 export default function MatchCard({ match, user, onBet, onResult }) {
   const finished = match.status === 'finished';
+  const locked = match.locked || finished;
   const hasBet = match.predicted_score1 !== null && match.predicted_score1 !== undefined;
 
   return (
@@ -71,10 +72,12 @@ export default function MatchCard({ match, user, onBet, onResult }) {
           </div>
         )}
         <div className="match-actions">
-          {!finished && (
+          {!locked ? (
             <button className="btn-bet" onClick={onBet}>
               {hasBet ? '✏️ Editar Apuesta' : '🎯 Apostar'}
             </button>
+          ) : !finished && (
+            <span className="bet-locked">🔒 Cerrado</span>
           )}
           {user?.is_admin && (
             <button className="btn-result" onClick={onResult}>

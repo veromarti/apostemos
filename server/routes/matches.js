@@ -20,7 +20,16 @@ router.get('/', authenticate, async (req, res) => {
       LEFT JOIN bets b ON b.match_id = m.id AND b.user_id = $1
       ORDER BY m.id
     `, [req.user.id]);
-    res.json(result.rows);
+    const now = Date.now();
+    const rows = result.rows.map(m => {
+      let locked = m.status === 'finished';
+      if (!locked && m.match_date && m.match_time && m.match_time !== 'TBD') {
+        const matchStart = new Date(`${m.match_date}T${m.match_time}:00-05:00`);
+        locked = now >= matchStart.getTime();
+      }
+      return { ...m, locked };
+    });
+    res.json(rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

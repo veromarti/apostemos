@@ -1,1 +1,4 @@
-node_modules/\nclient/dist/\n.env
+node_modules/
+client/dist/
+.env
+*.log

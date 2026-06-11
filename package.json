@@ -1,0 +1,11 @@
+{
+  "name": "apostemos",
+  "version": "1.0.0",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "build": "cd client && npm install && npm run build",
+    "start": "node server/index.js",
+    "dev": "node server/index.js",
+    "install:all": "npm install && cd server && npm install && cd ../client && npm install"
+  }
+}

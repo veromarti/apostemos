@@ -49,12 +49,17 @@ router.put('/:id/result', authenticate, async (req, res) => {
       let points = 0;
       const p1 = bet.predicted_score1;
       const p2 = bet.predicted_score2;
-      if (p1 === score1 && p2 === score2) {
+      const exactScore = p1 === score1 && p2 === score2;
+      const correctOutcome = (p1 > p2 && score1 > score2) || (p1 < p2 && score1 < score2) || (p1 === p2 && score1 === score2);
+      const oneScoreMatch = p1 === score1 || p2 === score2;
+      if (exactScore) {
+        points = 12;
+      } else if (correctOutcome && oneScoreMatch) {
+        points = 7;
+      } else if (correctOutcome) {
         points = 5;
-      } else if ((p1 > p2 && score1 > score2) || (p1 < p2 && score1 < score2)) {
-        points = 3;
-      } else if (p1 === p2 && score1 === score2) {
-        points = 1;
+      } else if (oneScoreMatch) {
+        points = 2;
       }
       await pool.query('UPDATE bets SET points_earned=$1, updated_at=NOW() WHERE id=$2', [points, bet.id]);
     }

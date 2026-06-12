@@ -13,10 +13,21 @@ Aplicación de pronósticos para el Mundial FIFA 2026. Vero y Jose compiten pred
 
 | Resultado | Puntos |
 |-----------|--------|
-| Marcador exacto | 5 pts |
-| Ganador correcto (sin marcador exacto) | 3 pts |
-| Empate correcto (sin marcador exacto) | 1 pt |
-| Predicción incorrecta | 0 pts |
+| Marcador exacto (ambos goles correctos) | 12 pts |
+| Ganador correcto + goles de un equipo correctos | 7 pts |
+| Ganador/empate correcto (ningún marcador exacto) | 5 pts |
+| Goles de un equipo correctos (ganador incorrecto) | 2 pts |
+| Sin aciertos | 0 pts |
+
+### Ejemplo (Resultado oficial: A 3 – 1 B)
+
+| Tu predicción | Puntos | Motivo |
+|--------------|--------|--------|
+| 3 – 1 | 12 | Marcador exacto |
+| 3 – 0 | 7 | Ganador + goles de A correctos |
+| 2 – 0 | 5 | Ganador correcto, ningún marcador exacto |
+| 0 – 1 | 2 | Goles de B correctos, ganador incorrecto |
+| 0 – 0 | 0 | Sin aciertos |
 
 ## Reglas
 

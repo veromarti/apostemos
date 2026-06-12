@@ -20,9 +20,10 @@ function getFlag(team) {
 }
 
 function getPointsBadgeClass(points) {
-  if (points === 5) return 'points-badge exact';
-  if (points === 3) return 'points-badge winner';
-  if (points === 1) return 'points-badge draw';
+  if (points === 12) return 'points-badge exact';
+  if (points === 7) return 'points-badge winner';
+  if (points === 5) return 'points-badge draw';
+  if (points === 2) return 'points-badge draw';
   return 'points-badge wrong';
 }
 
@@ -64,9 +65,10 @@ export default function MatchCard({ match, user, onBet, onResult }) {
             <span className="bet-score">{match.predicted_score1} - {match.predicted_score2}</span>
             {finished && match.points_earned !== null && (
               <span className={getPointsBadgeClass(match.points_earned)}>
-                {match.points_earned === 5 ? '⚽ +5 pts' :
-                 match.points_earned === 3 ? '✅ +3 pts' :
-                 match.points_earned === 1 ? '🤝 +1 pt' : '❌ 0 pts'}
+                {match.points_earned === 12 ? '⚽ +12 pts' :
+                 match.points_earned === 7 ? '✅ +7 pts' :
+                 match.points_earned === 5 ? '👍 +5 pts' :
+                 match.points_earned === 2 ? '🎯 +2 pts' : '❌ 0 pts'}
               </span>
             )}
           </div>

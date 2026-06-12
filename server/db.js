@@ -77,6 +77,26 @@ async function initDB() {
     }
   }
 
+  // Recalculate points for all finished matches using current scoring rules
+  const finished = await pool.query("SELECT * FROM matches WHERE status='finished'");
+  for (const match of finished.rows) {
+    const { id, score1, score2 } = match;
+    const bets = await pool.query('SELECT * FROM bets WHERE match_id=$1', [id]);
+    for (const bet of bets.rows) {
+      const p1 = bet.predicted_score1;
+      const p2 = bet.predicted_score2;
+      const exactScore = p1 === score1 && p2 === score2;
+      const correctOutcome = (p1 > p2 && score1 > score2) || (p1 < p2 && score1 < score2) || (p1 === p2 && score1 === score2);
+      const oneScoreMatch = p1 === score1 || p2 === score2;
+      let points = 0;
+      if (exactScore) points = 12;
+      else if (correctOutcome && oneScoreMatch) points = 7;
+      else if (correctOutcome) points = 5;
+      else if (oneScoreMatch) points = 2;
+      await pool.query('UPDATE bets SET points_earned=$1 WHERE id=$2', [points, bet.id]);
+    }
+  }
+
   console.log('DB initialized');
 }
 

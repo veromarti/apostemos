@@ -312,67 +312,6 @@ html, body {
   background: var(--accent-glow);
 }
 
-.points-guide-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.points-guide {
-  position: relative;
-  background: var(--bg-card);
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  padding: 1rem 1.5rem;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 1rem;
-}
-
-.points-guide h3 {
-  font-size: 0.9rem;
-  color: var(--accent);
-  white-space: nowrap;
-  margin: 0;
-}
-
-.points-guide-close {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.75rem;
-  background: none;
-  border: none;
-  color: var(--text-muted);
-  cursor: pointer;
-  font-size: 0.85rem;
-  line-height: 1;
-}
-
-.points-guide-table {
-  border-collapse: collapse;
-  font-size: 0.82rem;
-}
-
-.points-guide-table td {
-  padding: 0.15rem 0.5rem;
-  color: var(--text-dim);
-}
-
-.points-guide-table .pts-val {
-  color: var(--accent);
-  font-weight: 700;
-  text-align: right;
-  white-space: nowrap;
-}
-
-.points-guide-example {
-  font-size: 0.78rem;
-  color: var(--text-muted);
-  flex-basis: 100%;
-  margin: 0;
-}
 
 .header-user {
   display: flex;
@@ -820,6 +759,47 @@ html, body {
   border-radius: var(--radius);
   border: 1px solid var(--border);
   background: var(--bg-card);
+}
+
+.scoring-guide-card {
+  margin-top: 1.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+}
+
+.scoring-guide-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 0.75rem;
+}
+
+.scoring-guide-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 0.85rem;
+}
+
+.scoring-guide-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.875rem;
+}
+
+.sg-icon { width: 1.4rem; text-align: center; }
+.sg-desc { color: var(--text-dim); flex: 1; }
+.sg-pts { color: var(--accent); font-weight: 700; white-space: nowrap; }
+
+.scoring-guide-example {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border);
+  padding-top: 0.65rem;
+  margin: 0;
 }
 
 .leaderboard-table {

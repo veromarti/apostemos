@@ -25,7 +25,7 @@ router.get('/', authenticate, async (req, res) => {
       let locked = m.status === 'finished';
       if (!locked && m.match_date && m.match_time && m.match_time !== 'TBD') {
         const matchStart = new Date(`${m.match_date}T${m.match_time}:00-05:00`);
-        locked = now >= matchStart.getTime();
+        locked = now >= matchStart.getTime() + 10 * 60 * 1000;
       }
       return { ...m, locked };
     });

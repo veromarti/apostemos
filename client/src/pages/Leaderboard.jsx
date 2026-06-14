@@ -27,6 +27,7 @@ export default function Leaderboard({ user, setUser }) {
         ) : error ? (
           <p className="error-msg">{error}</p>
         ) : (
+          <>
           <div className="leaderboard-card">
             <table className="leaderboard-table">
               <thead>
@@ -59,6 +60,26 @@ export default function Leaderboard({ user, setUser }) {
               </tbody>
             </table>
           </div>
+
+          <div className="scoring-guide-card">
+            <h2 className="scoring-guide-title">🏅 Sistema de Puntos</h2>
+            <div className="scoring-guide-rows">
+              <div className="scoring-guide-row"><span className="sg-icon">⚽</span><span className="sg-desc">Marcador exacto</span><span className="sg-pts">12 pts</span></div>
+              <div className="scoring-guide-row"><span className="sg-icon">✅</span><span className="sg-desc">Ganador correcto + goles de un equipo exactos</span><span className="sg-pts">7 pts</span></div>
+              <div className="scoring-guide-row"><span className="sg-icon">👍</span><span className="sg-desc">Ganador/empate correcto (ningún gol exacto)</span><span className="sg-pts">5 pts</span></div>
+              <div className="scoring-guide-row"><span className="sg-icon">🎯</span><span className="sg-desc">Goles de un equipo exactos, ganador incorrecto</span><span className="sg-pts">2 pts</span></div>
+              <div className="scoring-guide-row"><span className="sg-icon">❌</span><span className="sg-desc">Sin aciertos</span><span className="sg-pts">0 pts</span></div>
+            </div>
+            <p className="scoring-guide-example">
+              Resultado oficial <strong>3 – 1</strong>: &nbsp;
+              3-1 → <strong>12</strong> &nbsp;·&nbsp;
+              3-0 → <strong>7</strong> &nbsp;·&nbsp;
+              2-0 → <strong>5</strong> &nbsp;·&nbsp;
+              0-1 → <strong>2</strong> &nbsp;·&nbsp;
+              0-0 → <strong>0</strong>
+            </p>
+          </div>
+          </>
         )}
       </div>
     </div>

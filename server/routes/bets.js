@@ -22,8 +22,9 @@ router.post('/', authenticate, async (req, res) => {
     const m = match.rows[0];
     if (m.match_date && m.match_time && m.match_time !== 'TBD') {
       const matchStart = new Date(`${m.match_date}T${m.match_time}:00-05:00`);
-      if (Date.now() >= matchStart.getTime()) {
-        return res.status(400).json({ error: 'El partido ya comenzó, no se puede modificar la apuesta' });
+      const deadline = matchStart.getTime() + 10 * 60 * 1000;
+      if (Date.now() >= deadline) {
+        return res.status(400).json({ error: 'El plazo para apostar en este partido ya venció' });
       }
     }
 

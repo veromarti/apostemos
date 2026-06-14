@@ -77,6 +77,34 @@ async function initDB() {
     }
   }
 
+  // Fix group matchup order to match official FIFA WC 2026 schedule
+  // Group A (IDs 1-6): South Korea and Czechia were swapped
+  await pool.query("UPDATE matches SET team1='South Korea', team2='Czechia' WHERE id=2");
+  await pool.query("UPDATE matches SET team1='Mexico', team2='South Korea' WHERE id=3");
+  await pool.query("UPDATE matches SET team1='South Africa', team2='Czechia' WHERE id=4");
+  await pool.query("UPDATE matches SET team1='Czechia', team2='Mexico' WHERE id=5");
+  await pool.query("UPDATE matches SET team1='South Africa', team2='South Korea' WHERE id=6");
+  // Group E (IDs 25-30): Ivory Coast and Curaçao were swapped
+  await pool.query("UPDATE matches SET team1='Germany', team2='Curaçao' WHERE id=25");
+  await pool.query("UPDATE matches SET team1='Ivory Coast', team2='Ecuador' WHERE id=26");
+  await pool.query("UPDATE matches SET team1='Germany', team2='Ivory Coast' WHERE id=27");
+  await pool.query("UPDATE matches SET team1='Curaçao', team2='Ecuador' WHERE id=28");
+  await pool.query("UPDATE matches SET team1='Curaçao', team2='Ivory Coast' WHERE id=30");
+  // Group H (IDs 43-48): Uruguay, Cape Verde, Saudi Arabia were shuffled
+  await pool.query("UPDATE matches SET team1='Spain', team2='Cape Verde' WHERE id=43");
+  await pool.query("UPDATE matches SET team1='Saudi Arabia', team2='Uruguay' WHERE id=44");
+  await pool.query("UPDATE matches SET team1='Spain', team2='Saudi Arabia' WHERE id=45");
+  await pool.query("UPDATE matches SET team1='Cape Verde', team2='Uruguay' WHERE id=46");
+  await pool.query("UPDATE matches SET team1='Uruguay', team2='Spain' WHERE id=47");
+  await pool.query("UPDATE matches SET team1='Cape Verde', team2='Saudi Arabia' WHERE id=48");
+  // Group K (IDs 61-66): Colombia, Congo DR, Uzbekistan were shuffled
+  await pool.query("UPDATE matches SET team1='Portugal', team2='Congo DR' WHERE id=61");
+  await pool.query("UPDATE matches SET team1='Uzbekistan', team2='Colombia' WHERE id=62");
+  await pool.query("UPDATE matches SET team1='Portugal', team2='Uzbekistan' WHERE id=63");
+  await pool.query("UPDATE matches SET team1='Congo DR', team2='Colombia' WHERE id=64");
+  await pool.query("UPDATE matches SET team1='Colombia', team2='Portugal' WHERE id=65");
+  await pool.query("UPDATE matches SET team1='Congo DR', team2='Uzbekistan' WHERE id=66");
+
   // Recalculate points for all finished matches using current scoring rules
   const finished = await pool.query("SELECT * FROM matches WHERE status='finished'");
   for (const match of finished.rows) {
@@ -105,17 +133,17 @@ function getAllMatches() {
 
   // Group stage data: [groupName, [T1, T2, T3, T4], knownMatchData]
   const groups = [
-    { name: 'A', teams: ['Mexico', 'South Africa', 'Czechia', 'South Korea'] },
+    { name: 'A', teams: ['Mexico', 'South Africa', 'South Korea', 'Czechia'] },
     { name: 'B', teams: ['Canada', 'Bosnia-Herzegovina', 'Qatar', 'Switzerland'] },
     { name: 'C', teams: ['Brazil', 'Morocco', 'Haiti', 'Scotland'] },
     { name: 'D', teams: ['USA', 'Paraguay', 'Australia', 'Türkiye'] },
-    { name: 'E', teams: ['Germany', 'Ivory Coast', 'Curaçao', 'Ecuador'] },
+    { name: 'E', teams: ['Germany', 'Curaçao', 'Ivory Coast', 'Ecuador'] },
     { name: 'F', teams: ['Netherlands', 'Japan', 'Sweden', 'Tunisia'] },
     { name: 'G', teams: ['Belgium', 'Egypt', 'Iran', 'New Zealand'] },
-    { name: 'H', teams: ['Spain', 'Uruguay', 'Cape Verde', 'Saudi Arabia'] },
+    { name: 'H', teams: ['Spain', 'Cape Verde', 'Saudi Arabia', 'Uruguay'] },
     { name: 'I', teams: ['France', 'Senegal', 'Iraq', 'Norway'] },
     { name: 'J', teams: ['Argentina', 'Algeria', 'Austria', 'Jordan'] },
-    { name: 'K', teams: ['Portugal', 'Colombia', 'Congo DR', 'Uzbekistan'] },
+    { name: 'K', teams: ['Portugal', 'Congo DR', 'Uzbekistan', 'Colombia'] },
     { name: 'L', teams: ['England', 'Croatia', 'Ghana', 'Panama'] },
   ];
 

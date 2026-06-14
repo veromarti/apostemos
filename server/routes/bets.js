@@ -46,9 +46,10 @@ router.get('/leaderboard', authenticate, async (req, res) => {
       SELECT
         u.username,
         COALESCE(SUM(b.points_earned), 0) as "totalPoints",
-        COUNT(CASE WHEN b.points_earned = 5 THEN 1 END) as "correctScores",
-        COUNT(CASE WHEN b.points_earned = 3 THEN 1 END) as "correctWinners",
-        COUNT(CASE WHEN b.points_earned = 1 THEN 1 END) as "correctDraws",
+        COUNT(CASE WHEN b.points_earned = 12 THEN 1 END) as "exactScores",
+        COUNT(CASE WHEN b.points_earned = 7 THEN 1 END) as "winnerAndScore",
+        COUNT(CASE WHEN b.points_earned = 5 THEN 1 END) as "correctOutcome",
+        COUNT(CASE WHEN b.points_earned = 2 THEN 1 END) as "oneScore",
         COUNT(b.id) as "totalBets"
       FROM users u
       LEFT JOIN bets b ON b.user_id = u.id

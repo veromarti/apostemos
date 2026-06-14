@@ -312,6 +312,68 @@ html, body {
   background: var(--accent-glow);
 }
 
+.points-guide-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.points-guide {
+  position: relative;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 1rem 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+}
+
+.points-guide h3 {
+  font-size: 0.9rem;
+  color: var(--accent);
+  white-space: nowrap;
+  margin: 0;
+}
+
+.points-guide-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
+.points-guide-table {
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.points-guide-table td {
+  padding: 0.15rem 0.5rem;
+  color: var(--text-dim);
+}
+
+.points-guide-table .pts-val {
+  color: var(--accent);
+  font-weight: 700;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.points-guide-example {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  flex-basis: 100%;
+  margin: 0;
+}
+
 .header-user {
   display: flex;
   align-items: center;

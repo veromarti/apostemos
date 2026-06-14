@@ -34,9 +34,10 @@ export default function Leaderboard({ user, setUser }) {
                   <th>#</th>
                   <th>Jugador</th>
                   <th>Puntos</th>
-                  <th title="Resultado Exacto (5pts)">⚽ Exactos</th>
-                  <th title="Ganador Correcto (3pts)">✅ Ganador</th>
-                  <th title="Empate Correcto (1pt)">🤝 Empate</th>
+                  <th title="Marcador exacto (12pts)">⚽ Exacto</th>
+                  <th title="Ganador + un marcador exacto (7pts)">✅ Ganador+</th>
+                  <th title="Ganador/empate correcto (5pts)">👍 Ganador</th>
+                  <th title="Un marcador exacto, ganador incorrecto (2pts)">🎯 Un gol</th>
                   <th>Apuestas</th>
                 </tr>
               </thead>
@@ -48,9 +49,10 @@ export default function Leaderboard({ user, setUser }) {
                     </td>
                     <td className="player-cell">{player.username}</td>
                     <td className="points-cell">{player.totalPoints}</td>
-                    <td>{player.correctScores}</td>
-                    <td>{player.correctWinners}</td>
-                    <td>{player.correctDraws}</td>
+                    <td>{player.exactScores}</td>
+                    <td>{player.winnerAndScore}</td>
+                    <td>{player.correctOutcome}</td>
+                    <td>{player.oneScore}</td>
                     <td>{player.totalBets}</td>
                   </tr>
                 ))}

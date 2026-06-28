@@ -198,6 +198,23 @@ html, body {
   letter-spacing: 0.5px;
 }
 
+.team-select {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 1rem;
+  padding: 0.75rem 1rem;
+  outline: none;
+  width: 100%;
+  cursor: pointer;
+  transition: border-color var(--transition);
+}
+
+.team-select:focus {
+  border-color: var(--accent);
+}
+
 .form-group input {
   background: var(--bg);
   border: 1px solid var(--border);

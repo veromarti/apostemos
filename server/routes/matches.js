@@ -35,6 +35,20 @@ router.get('/', authenticate, async (req, res) => {
   }
 });
 
+router.get('/teams', authenticate, async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT DISTINCT team1 AS name FROM matches WHERE stage='Group Stage'
+      UNION
+      SELECT DISTINCT team2 AS name FROM matches WHERE stage='Group Stage'
+      ORDER BY name
+    `);
+    res.json(result.rows.map(r => r.name));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.put('/:id/teams', authenticate, async (req, res) => {
   if (!req.user.is_admin) return res.status(403).json({ error: 'Admin only' });
   const { team1, team2 } = req.body;

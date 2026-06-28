@@ -47,6 +47,13 @@ export async function placeBet(matchId, predictedScore1, predictedScore2) {
   return data;
 }
 
+export async function getTeams() {
+  const res = await fetch(`${BASE_URL}/api/matches/teams`, { headers: authHeaders() });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Failed to get teams');
+  return data;
+}
+
 export async function updateTeams(matchId, team1, team2) {
   const res = await fetch(`${BASE_URL}/api/matches/${matchId}/teams`, {
     method: 'PUT',

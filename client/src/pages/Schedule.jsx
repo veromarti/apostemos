@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from '../components/Header.jsx';
 import MatchCard from '../components/MatchCard.jsx';
 import BetModal from '../components/BetModal.jsx';
-import { getMatches, placeBet, updateResult, updateTeams } from '../api.js';
+import { getMatches, placeBet, updateResult, updateTeams, getTeams } from '../api.js';
 
 const GROUPS = ['A','B','C','D','E','F','G','H','I','J','K','L'];
 
@@ -15,6 +15,7 @@ export default function Schedule({ user, setUser }) {
   const [resultModal, setResultModal] = useState(null);
   const [resultScore, setResultScore] = useState({ score1: 0, score2: 0 });
   const [resultTeams, setResultTeams] = useState({ team1: '', team2: '' });
+  const [teamList, setTeamList] = useState([]);
   const [error, setError] = useState('');
 
   async function loadMatches() {
@@ -28,7 +29,10 @@ export default function Schedule({ user, setUser }) {
     }
   }
 
-  useEffect(() => { loadMatches(); }, []);
+  useEffect(() => {
+    loadMatches();
+    getTeams().then(setTeamList).catch(() => {});
+  }, []);
 
   const isTBD = match => match.team1 === 'TBD' || match.team2 === 'TBD';
 
@@ -167,27 +171,35 @@ export default function Schedule({ user, setUser }) {
                 <form onSubmit={handleResultSubmit}>
                   <div className="form-group">
                     <label>Equipo 1</label>
-                    <input
-                      type="text"
-                      placeholder="Nombre del equipo"
+                    <select
                       required
                       value={resultTeams.team1}
                       onChange={e => setResultTeams(s => ({ ...s, team1: e.target.value }))}
-                    />
+                      className="team-select"
+                    >
+                      <option value="">— Seleccionar equipo —</option>
+                      {teamList.filter(t => t !== resultTeams.team2).map(t => (
+                        <option key={t} value={t}>{t}</option>
+                      ))}
+                    </select>
                   </div>
                   <div className="form-group" style={{ marginTop: '0.75rem' }}>
                     <label>Equipo 2</label>
-                    <input
-                      type="text"
-                      placeholder="Nombre del equipo"
+                    <select
                       required
                       value={resultTeams.team2}
                       onChange={e => setResultTeams(s => ({ ...s, team2: e.target.value }))}
-                    />
+                      className="team-select"
+                    >
+                      <option value="">— Seleccionar equipo —</option>
+                      {teamList.filter(t => t !== resultTeams.team1).map(t => (
+                        <option key={t} value={t}>{t}</option>
+                      ))}
+                    </select>
                   </div>
                   <div className="modal-actions">
                     <button type="button" className="btn-secondary" onClick={() => setResultModal(null)}>Cancelar</button>
-                    <button type="submit" className="btn-primary">Guardar</button>
+                    <button type="submit" className="btn-primary" disabled={!resultTeams.team1 || !resultTeams.team2}>Guardar</button>
                   </div>
                 </form>
               </>

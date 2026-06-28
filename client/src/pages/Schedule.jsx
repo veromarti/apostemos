@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from '../components/Header.jsx';
 import MatchCard from '../components/MatchCard.jsx';
 import BetModal from '../components/BetModal.jsx';
-import { getMatches, placeBet, updateResult } from '../api.js';
+import { getMatches, placeBet, updateResult, updateTeams } from '../api.js';
 
 const GROUPS = ['A','B','C','D','E','F','G','H','I','J','K','L'];
 
@@ -14,6 +14,7 @@ export default function Schedule({ user, setUser }) {
   const [betModal, setBetModal] = useState(null);
   const [resultModal, setResultModal] = useState(null);
   const [resultScore, setResultScore] = useState({ score1: 0, score2: 0 });
+  const [resultTeams, setResultTeams] = useState({ team1: '', team2: '' });
   const [error, setError] = useState('');
 
   async function loadMatches() {
@@ -29,10 +30,16 @@ export default function Schedule({ user, setUser }) {
 
   useEffect(() => { loadMatches(); }, []);
 
+  const isTBD = match => match.team1 === 'TBD' || match.team2 === 'TBD';
+
   async function handleResultSubmit(e) {
     e.preventDefault();
     try {
-      await updateResult(resultModal.id, parseInt(resultScore.score1), parseInt(resultScore.score2));
+      if (isTBD(resultModal)) {
+        await updateTeams(resultModal.id, resultTeams.team1, resultTeams.team2);
+      } else {
+        await updateResult(resultModal.id, parseInt(resultScore.score1), parseInt(resultScore.score2));
+      }
       setResultModal(null);
       loadMatches();
     } catch (err) {
@@ -90,6 +97,7 @@ export default function Schedule({ user, setUser }) {
                     onResult={() => {
                       setResultModal(match);
                       setResultScore({ score1: match.score1 ?? 0, score2: match.score2 ?? 0 });
+                      setResultTeams({ team1: '', team2: '' });
                     }}
                   />
                 ))}
@@ -118,6 +126,7 @@ export default function Schedule({ user, setUser }) {
                         onResult={() => {
                           setResultModal(match);
                           setResultScore({ score1: match.score1 ?? 0, score2: match.score2 ?? 0 });
+                          setResultTeams({ team1: '', team2: '' });
                         }}
                       />
                     ))}
@@ -151,37 +160,72 @@ export default function Schedule({ user, setUser }) {
       {resultModal && user?.is_admin && (
         <div className="modal-overlay" onClick={() => setResultModal(null)}>
           <div className="modal" onClick={e => e.stopPropagation()}>
-            <h2>Ingresar Resultado</h2>
-            <p className="modal-match-title">{resultModal.team1} vs {resultModal.team2}</p>
-            <form onSubmit={handleResultSubmit}>
-              <div className="result-inputs">
-                <div className="form-group">
-                  <label>{resultModal.team1}</label>
-                  <input
-                    type="number"
-                    min="0"
-                    max="20"
-                    value={resultScore.score1}
-                    onChange={e => setResultScore(s => ({ ...s, score1: e.target.value }))}
-                  />
-                </div>
-                <span className="result-vs">-</span>
-                <div className="form-group">
-                  <label>{resultModal.team2}</label>
-                  <input
-                    type="number"
-                    min="0"
-                    max="20"
-                    value={resultScore.score2}
-                    onChange={e => setResultScore(s => ({ ...s, score2: e.target.value }))}
-                  />
-                </div>
-              </div>
-              <div className="modal-actions">
-                <button type="button" className="btn-secondary" onClick={() => setResultModal(null)}>Cancelar</button>
-                <button type="submit" className="btn-primary">Guardar</button>
-              </div>
-            </form>
+            {isTBD(resultModal) ? (
+              <>
+                <h2>Definir Equipos</h2>
+                <p className="modal-match-title">{resultModal.stage} · Partido {resultModal.match_number}</p>
+                <form onSubmit={handleResultSubmit}>
+                  <div className="form-group">
+                    <label>Equipo 1</label>
+                    <input
+                      type="text"
+                      placeholder="Nombre del equipo"
+                      required
+                      value={resultTeams.team1}
+                      onChange={e => setResultTeams(s => ({ ...s, team1: e.target.value }))}
+                    />
+                  </div>
+                  <div className="form-group" style={{ marginTop: '0.75rem' }}>
+                    <label>Equipo 2</label>
+                    <input
+                      type="text"
+                      placeholder="Nombre del equipo"
+                      required
+                      value={resultTeams.team2}
+                      onChange={e => setResultTeams(s => ({ ...s, team2: e.target.value }))}
+                    />
+                  </div>
+                  <div className="modal-actions">
+                    <button type="button" className="btn-secondary" onClick={() => setResultModal(null)}>Cancelar</button>
+                    <button type="submit" className="btn-primary">Guardar</button>
+                  </div>
+                </form>
+              </>
+            ) : (
+              <>
+                <h2>Ingresar Resultado</h2>
+                <p className="modal-match-title">{resultModal.team1} vs {resultModal.team2}</p>
+                <form onSubmit={handleResultSubmit}>
+                  <div className="result-inputs">
+                    <div className="form-group">
+                      <label>{resultModal.team1}</label>
+                      <input
+                        type="number"
+                        min="0"
+                        max="20"
+                        value={resultScore.score1}
+                        onChange={e => setResultScore(s => ({ ...s, score1: e.target.value }))}
+                      />
+                    </div>
+                    <span className="result-vs">-</span>
+                    <div className="form-group">
+                      <label>{resultModal.team2}</label>
+                      <input
+                        type="number"
+                        min="0"
+                        max="20"
+                        value={resultScore.score2}
+                        onChange={e => setResultScore(s => ({ ...s, score2: e.target.value }))}
+                      />
+                    </div>
+                  </div>
+                  <div className="modal-actions">
+                    <button type="button" className="btn-secondary" onClick={() => setResultModal(null)}>Cancelar</button>
+                    <button type="submit" className="btn-primary">Guardar</button>
+                  </div>
+                </form>
+              </>
+            )}
           </div>
         </div>
       )}

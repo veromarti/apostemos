@@ -47,6 +47,17 @@ export async function placeBet(matchId, predictedScore1, predictedScore2) {
   return data;
 }
 
+export async function updateTeams(matchId, team1, team2) {
+  const res = await fetch(`${BASE_URL}/api/matches/${matchId}/teams`, {
+    method: 'PUT',
+    headers: authHeaders(),
+    body: JSON.stringify({ team1, team2 })
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Failed to update teams');
+  return data;
+}
+
 export async function updateResult(matchId, score1, score2) {
   const res = await fetch(`${BASE_URL}/api/matches/${matchId}/result`, {
     method: 'PUT',

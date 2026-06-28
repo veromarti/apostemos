@@ -35,6 +35,21 @@ router.get('/', authenticate, async (req, res) => {
   }
 });
 
+router.put('/:id/teams', authenticate, async (req, res) => {
+  if (!req.user.is_admin) return res.status(403).json({ error: 'Admin only' });
+  const { team1, team2 } = req.body;
+  if (!team1 || !team2) return res.status(400).json({ error: 'Both team names required' });
+  try {
+    const updated = await pool.query(
+      'UPDATE matches SET team1=$1, team2=$2 WHERE id=$3 RETURNING *',
+      [team1.trim(), team2.trim(), parseInt(req.params.id)]
+    );
+    res.json(updated.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.put('/:id/result', authenticate, async (req, res) => {
   if (!req.user.is_admin) return res.status(403).json({ error: 'Admin only' });
   const { score1, score2 } = req.body;
